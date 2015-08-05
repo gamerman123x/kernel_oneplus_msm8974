@@ -54,7 +54,9 @@ struct mdss_livedisplay_ctx {
 	unsigned int num_presets;
 	unsigned int caps;
 
+#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 	uint32_t r, g, b;
+#endif
 	struct msm_fb_data_type *mfd;
 
 	struct mutex lock;

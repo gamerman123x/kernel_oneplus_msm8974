@@ -123,7 +123,6 @@ exit_free:
 	return -ENOMEM;
 }
 
-#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 /**
  * simple color temperature interface using polynomial color correction
  *
@@ -161,7 +160,6 @@ static int mdss_livedisplay_set_rgb_locked(struct msm_fb_data_type *mfd)
 
 	return mdss_mdp_user_pcc_config(&pcc_cfg);
 }
-#endif
 
 /*
  * Update all or a subset of parameters
@@ -278,10 +276,8 @@ static int mdss_livedisplay_update_locked(struct mdss_dsi_ctrl_pdata *ctrl_pdata
 
 	kfree(cmd_buf);
 
-#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 	// Restore saved RGB settings
 	mdss_livedisplay_set_rgb_locked(mlc->mfd);
-#endif
 
 	return ret;
 }
@@ -486,7 +482,6 @@ static ssize_t mdss_livedisplay_get_num_presets(struct device *dev,
 	return sprintf(buf, "%d\n", mlc->num_presets);
 }
 
-#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 static ssize_t mdss_livedisplay_get_rgb(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -546,7 +541,6 @@ static ssize_t mdss_livedisplay_set_rgb(struct device *dev,
 
 	return ret;
 }
-#endif
 
 static DEVICE_ATTR(cabc, S_IRUGO | S_IWUSR | S_IWGRP, mdss_livedisplay_get_cabc, mdss_livedisplay_set_cabc);
 static DEVICE_ATTR(sre, S_IRUGO | S_IWUSR | S_IWGRP, mdss_livedisplay_get_sre, mdss_livedisplay_set_sre);
@@ -554,9 +548,7 @@ static DEVICE_ATTR(color_enhance, S_IRUGO | S_IWUSR | S_IWGRP, mdss_livedisplay_
 static DEVICE_ATTR(aco, S_IRUGO | S_IWUSR | S_IWGRP, mdss_livedisplay_get_aco, mdss_livedisplay_set_aco);
 static DEVICE_ATTR(preset, S_IRUGO | S_IWUSR | S_IWGRP, mdss_livedisplay_get_preset, mdss_livedisplay_set_preset);
 static DEVICE_ATTR(num_presets, S_IRUGO, mdss_livedisplay_get_num_presets, NULL);
-#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 static DEVICE_ATTR(rgb, S_IRUGO | S_IWUSR | S_IWGRP, mdss_livedisplay_get_rgb, mdss_livedisplay_set_rgb);
-#endif
 
 int mdss_livedisplay_parse_dt(struct device_node *np, struct mdss_panel_info *pinfo)
 {
@@ -624,9 +616,7 @@ int mdss_livedisplay_parse_dt(struct device_node *np, struct mdss_panel_info *pi
 	mlc->post_cmds = of_get_property(np,
 			"cm,mdss-livedisplay-post-cmd", &mlc->post_cmds_len);
 
-#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 	mlc->r = mlc->g = mlc->b = 32768;
-#endif
 
 	pinfo->livedisplay = mlc;
 	return 0;
@@ -640,11 +630,9 @@ int mdss_livedisplay_create_sysfs(struct msm_fb_data_type *mfd)
 	if (mlc == NULL)
 		return 0;
 
-#ifndef CONFIG_FB_MSM_MDSS_KCAL_CTRL
 	rc = sysfs_create_file(&mfd->fbi->dev->kobj, &dev_attr_rgb.attr);
 	if (rc)
 		goto sysfs_err;
-#endif
 
 	if (mlc->caps & MODE_CABC) {
 		rc = sysfs_create_file(&mfd->fbi->dev->kobj, &dev_attr_cabc.attr);
